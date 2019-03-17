@@ -9,7 +9,7 @@ const jwt = require('express-jwt');
 const config = require('./config');
 
 const mongoose = require('mongoose');
-mongoose.connect(config.dbConnStr, {useNewUrlParser: true});
+mongoose.connect(config.dbConnStr, {useNewUrlParser: true, useCreateIndex: true});
 
 const errorHandler = require('./routes/errors');
 const indexRouter = require('./routes/index');
