@@ -60,6 +60,10 @@ UserSchema.methods.toAuthJSON = function() {
   };
 };
 
+UserSchema.statics.findByUsername = async function(username) {
+  return await this.findOne({username}).exec();
+};
+
 UserSchema.pre('save', async function(next) {
   if (this.isModified('password')) {
     await this.setPassword(this.password);

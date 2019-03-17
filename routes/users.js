@@ -12,7 +12,7 @@ router
   .post('/login', async (req, res, next) => {
     try {
       const {username, password} = req.body;
-      const user = await User.findOne({username}).exec();
+      const user = await User.findByUsername(username);
       if (!user) {
         return next('Invalid username or password');
       }
