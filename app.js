@@ -5,17 +5,24 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const jwt = require('express-jwt');
+const debug = require('debug')('surveyer:app');
 
 const config = require('./config');
 
+const app = express();
+
+debug('Environment: %s', app.get('env'));
+
 const mongoose = require('mongoose');
-mongoose.connect(config.dbConnStr, {useNewUrlParser: true, useCreateIndex: true});
+mongoose.connect(config.dbConnStr, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    autoIndex: app.get('env') !== 'production', // Enable autoIndex feature by NODE_ENV value
+});
 
 const errorHandler = require('./routes/errors');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-
-const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -33,7 +40,7 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(jwt({secret: config.secret}).unless({path: ['/users/login']}));
+app.use(jwt({secret: config.secret}).unless({path: ['/users/login', '/users/']}));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
